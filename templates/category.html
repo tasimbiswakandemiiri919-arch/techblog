@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ cat.name }} — TechBlog{% endblock %}
+{% block content %}
+<div class="page-header">
+  <span class="cat-badge lg" style="background:{{ cat.color }}22;color:{{ cat.color }};border-color:{{ cat.color }}44">{{ cat.name }}</span>
+  <h2>{{ posts|length }} post{% if posts|length != 1 %}s{% endif %} in {{ cat.name }}</h2>
+</div>
+<div class="posts-list">
+  {% for post in posts %}
+  <article class="post-card">
+    <h3><a href="{{ url_for('post_detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+    <p class="post-excerpt">{{ post.excerpt }}</p>
+    <div class="post-meta"><span>✍️ {{ post.username }}</span><span>{{ post.created_at.strftime('%d %b %Y') }}</span><span>👁 {{ post.views }}</span></div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}TechBlog — Programming & Tech{% endblock %}
+{% block content %}
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">// TECH BLOG</div>
+    <h1>Programming Insights<br><span>& Dev Notes</span></h1>
+    <p>Articles on Python, Java, Web Dev, Databases, Algorithms and more.</p>
+    <div class="hero-stats">
+      <span>📝 {{ post_count }} Articles</span>
+      <span>🗂️ {{ categories|length }} Topics</span>
+    </div>
+  </div>
+</div>
+
+<div class="content-grid">
+  <main>
+    <div class="section-header">
+      <h2>Latest Posts</h2>
+      <form action="{{ url_for('search') }}" method="GET" class="search-form">
+        <input type="text" name="q" placeholder="Search articles...">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    {% if posts %}
+    <div class="posts-grid">
+      {% for post in posts %}
+      <article class="post-card">
+        <div class="post-card-top">
+          {% if post.cat_name %}
+          <a href="{{ url_for('category', slug=post.cat_slug) }}" class="cat-badge" style="background:{{ post.cat_color }}22;color:{{ post.cat_color }};border-color:{{ post.cat_color }}44">{{ post.cat_name }}</a>
+          {% endif %}
+          <span class="post-views">👁 {{ post.views }}</span>
+        </div>
+        <h3><a href="{{ url_for('post_detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+        <p class="post-excerpt">{{ post.excerpt }}</p>
+        <div class="post-meta">
+          <span>✍️ {{ post.username }}</span>
+          <span>{{ post.created_at.strftime('%d %b %Y') }}</span>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>No posts yet. <a href="{{ url_for('register') }}">Register</a> and write the first one!</p>
+    </div>
+    {% endif %}
+  </main>
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>Topics</h3>
+      <div class="cat-list">
+        {% for cat in categories %}
+        <a href="{{ url_for('category', slug=cat.slug) }}" class="cat-pill" style="border-color:{{ cat.color }}44;color:{{ cat.color }}">{{ cat.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    {% if not session.user_id %}
+    <div class="sidebar-card cta-card">
+      <h3>Share Your Knowledge</h3>
+      <p>Join TechBlog and start writing about what you know.</p>
+      <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started →</a>
+    </div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

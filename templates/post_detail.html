@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} — TechBlog{% endblock %}
+{% block content %}
+<div class="post-detail-wrap">
+  <article class="post-detail">
+    <div class="post-detail-meta">
+      {% if post.cat_name %}
+      <span class="cat-badge" style="background:{{ post.cat_color }}22;color:{{ post.cat_color }};border-color:{{ post.cat_color }}44">{{ post.cat_name }}</span>
+      {% endif %}
+      <span>{{ post.created_at.strftime('%d %B %Y') }}</span>
+      <span>👁 {{ post.views }} views</span>
+    </div>
+    <h1>{{ post.title }}</h1>
+    <div class="post-author-row">
+      <div class="author-avatar">{{ post.username[0].upper() }}</div>
+      <div>
+        <div class="author-name">{{ post.username }}</div>
+        {% if post.bio %}<div class="author-bio">{{ post.bio }}</div>{% endif %}
+      </div>
+    </div>
+    <div class="post-content">{{ post.content|safe }}</div>
+  </article>
+
+  <!-- Comments -->
+  <div class="comments-section">
+    <h3>Comments ({{ comments|length }})</h3>
+    {% for c in comments %}
+    <div class="comment">
+      <div class="comment-header">
+        <div class="comment-avatar">{{ c.author_name[0].upper() }}</div>
+        <div>
+          <strong>{{ c.author_name }}</strong>
+          <span class="comment-date">{{ c.created_at.strftime('%d %b %Y') }}</span>
+        </div>
+      </div>
+      <p>{{ c.content }}</p>
+    </div>
+    {% endfor %}
+
+    <div class="comment-form-wrap">
+      <h4>Leave a Comment</h4>
+      <form action="{{ url_for('add_comment', slug=post.slug) }}" method="POST" class="comment-form">
+        <div class="form-row">
+          <input type="text" name="name" placeholder="Your name" required>
+          <input type="email" name="email" placeholder="Email (not shown)" required>
+        </div>
+        <textarea name="content" placeholder="Write your comment..." rows="4" required></textarea>
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+      </form>
+    </div>
+  </div>
+
+  {% if related %}
+  <div class="related-posts">
+    <h3>Related Posts</h3>
+    <div class="related-grid">
+      {% for r in related %}
+      <a href="{{ url_for('post_detail', slug=r.slug) }}" class="related-card">
+        {% if r.cat_name %}<span class="cat-badge" style="background:{{ r.cat_color }}22;color:{{ r.cat_color }}">{{ r.cat_name }}</span>{% endif %}
+        <h4>{{ r.title }}</h4>
+        <p>{{ r.excerpt[:80] }}...</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
