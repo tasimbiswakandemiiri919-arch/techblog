@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Your Feed — TechBlog{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Your Feed</h2>
+  <p>Latest posts from authors you follow.</p>
+</div>
+{% if posts %}
+<div class="posts-list">
+  {% for post in posts %}
+  <article class="post-card">
+    {% if post.cat_name %}<span class="cat-badge" style="background:{{ post.cat_color }}22;color:{{ post.cat_color }}">{{ post.cat_name }}</span>{% endif %}
+    <h3><a href="{{ url_for('post_detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+    <p class="post-excerpt">{{ post.excerpt }}</p>
+    <div class="post-meta">
+      <span>✍️ <a href="{{ url_for('author_profile', username=post.username) }}">{{ post.username }}</a></span>
+      <span>{{ post.created_at.strftime('%d %b %Y') }}</span>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>You're not following anyone yet, or they haven't posted.</p>
+  <a href="{{ url_for('index') }}" class="btn btn-primary">Browse posts to find authors to follow</a>
+</div>
+{% endif %}
+{% endblock %}

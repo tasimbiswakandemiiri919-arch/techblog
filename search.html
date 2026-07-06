@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Search — TechBlog{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Search Results {% if query %}for "{{ query }}"{% endif %}</h2>
+</div>
+<form action="{{ url_for('search') }}" method="GET" class="search-form big">
+  <input type="text" name="q" value="{{ query }}" placeholder="Search articles...">
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+<form action="{{ url_for('search') }}" method="GET" class="search-filters">
+  <input type="hidden" name="q" value="{{ query }}">
+  <div class="form-row-2">
+    <div class="form-group">
+      <label>Category</label>
+      <select name="category">
+        <option value="">All categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat.slug }}" {% if cat_slug == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Author</label>
+      <select name="author">
+        <option value="">All authors</option>
+        {% for a in authors %}
+        <option value="{{ a.username }}" {% if author == a.username %}selected{% endif %}>{{ a.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="form-row-2">
+    <div class="form-group">
+      <label>From date</label>
+      <input type="date" name="date_from" value="{{ date_from }}">
+    </div>
+    <div class="form-group">
+      <label>To date</label>
+      <input type="date" name="date_to" value="{{ date_to }}">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-secondary">Apply Filters</button>
+</form>
+{% if posts %}
+<p class="result-count">{{ posts|length }} result{% if posts|length != 1 %}s{% endif %} found</p>
+<div class="posts-list">
+  {% for post in posts %}
+  <article class="post-card">
+    {% if post.cat_name %}<span class="cat-badge" style="background:{{ post.cat_color }}22;color:{{ post.cat_color }}">{{ post.cat_name }}</span>{% endif %}
+    <h3><a href="{{ url_for('post_detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+    <p class="post-excerpt">{{ post.excerpt }}</p>
+    <div class="post-meta"><span>✍️ {{ post.username }}</span><span>{{ post.created_at.strftime('%d %b %Y') }}</span></div>
+  </article>
+  {% endfor %}
+</div>
+{% elif query or cat_slug or author or date_from or date_to %}
+<div class="empty-state"><p>No results found for these filters.</p></div>
+{% endif %}
+{% endblock %}

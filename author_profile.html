@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}{{ author.username }} — TechBlog{% endblock %}
+{% block content %}
+<div class="author-profile-header">
+  {% if author.avatar_url %}
+    <img src="{{ author.avatar_url }}" alt="{{ author.username }}" class="author-avatar-lg">
+  {% else %}
+    <div class="author-avatar author-avatar-lg">{{ author.username[0].upper() }}</div>
+  {% endif %}
+  <div>
+    <h2>{{ author.username }}</h2>
+    {% if author.bio %}<p class="author-bio">{{ author.bio }}</p>{% endif %}
+    {% if author.social_links %}<p class="author-social">{{ author.social_links }}</p>{% endif %}
+    <p class="follower-count">{{ follower_count }} follower{% if follower_count != 1 %}s{% endif %}</p>
+
+    {% if session.get('user_id') and session.get('username') != author.username %}
+      {% if is_following %}
+      <form action="{{ url_for('unfollow_author', username=author.username) }}" method="POST">
+        <button type="submit" class="btn btn-secondary">Unfollow</button>
+      </form>
+      {% else %}
+      <form action="{{ url_for('follow_author', username=author.username) }}" method="POST">
+        <button type="submit" class="btn btn-primary">Follow</button>
+      </form>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<h3>Posts by {{ author.username }}</h3>
+{% if posts %}
+<div class="posts-list">
+  {% for post in posts %}
+  <article class="post-card">
+    {% if post.cat_name %}<span class="cat-badge" style="background:{{ post.cat_color }}22;color:{{ post.cat_color }}">{{ post.cat_name }}</span>{% endif %}
+    <h3><a href="{{ url_for('post_detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+    <p class="post-excerpt">{{ post.excerpt }}</p>
+    <div class="post-meta"><span>{{ post.created_at.strftime('%d %b %Y') }}</span></div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><p>No published posts yet.</p></div>
+{% endif %}
+{% endblock %}

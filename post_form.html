@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{% if post %}Edit Post{% else %}New Post{% endif %} — TechBlog{% endblock %}
+{% block content %}
+<div class="form-page">
+  <h2>{% if post %}Edit Post{% else %}New Post{% endif %}</h2>
+  <form method="POST" class="post-form">
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" name="title" value="{{ post.title if post else '' }}" placeholder="Post title..." required>
+    </div>
+    <div class="form-group">
+      <label>Excerpt (short description)</label>
+      <textarea name="excerpt" rows="2" placeholder="Brief description shown on the home page..." required>{{ post.excerpt if post else '' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Content (HTML supported)</label>
+      <textarea name="content" rows="16" placeholder="Write your post content here... HTML is supported." required>{{ post.content if post else '' }}</textarea>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group">
+        <label>Category</label>
+        <select name="category_id">
+          <option value="">-- Select category --</option>
+          {% for cat in categories %}
+          <option value="{{ cat.category_id }}" {% if post and post.category_id == cat.category_id %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status" id="status-select" onchange="document.getElementById('schedule-row').style.display = this.value === 'scheduled' ? 'block' : 'none';">
+          <option value="draft" {% if post and post.status == 'draft' %}selected{% endif %}>Draft</option>
+          <option value="scheduled" {% if post and post.status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+          <option value="published" {% if post and post.status == 'published' %}selected{% endif %}>Published</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" id="schedule-row" style="display: {% if post and post.status == 'scheduled' %}block{% else %}none{% endif %};">
+      <label>Publish at</label>
+      <input type="datetime-local" name="scheduled_at" value="{{ post.scheduled_at.strftime('%Y-%m-%dT%H:%M') if post and post.scheduled_at else '' }}">
+      <small>Post goes live automatically once this time passes.</small>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{% if post %}Update Post{% else %}Create Post{% endif %}</button>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
