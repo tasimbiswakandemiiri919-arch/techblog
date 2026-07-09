@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Search — TechBlog{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Search Results {% if query %}for "{{ query }}"{% endif %}</h2>
+</div>
+<form action="{{ url_for('search') }}" method="GET" class="search-form big">
+  <input type="text" name="q" value="{{ query }}" placeholder="Search articles...">
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+{% if posts %}
+<p class="result-count">{{ posts|length }} result{% if posts|length != 1 %}s{% endif %} found</p>
+<div class="posts-list">
+  {% for post in posts %}
+  <article class="post-card">
+    {% if post.cat_name %}<span class="cat-badge" style="background:{{ post.cat_color }}22;color:{{ post.cat_color }}">{{ post.cat_name }}</span>{% endif %}
+    <h3><a href="{{ url_for('post_detail', slug=post.slug) }}">{{ post.title }}</a></h3>
+    <p class="post-excerpt">{{ post.excerpt }}</p>
+    <div class="post-meta"><span>✍️ {{ post.username }}</span><span>{{ post.created_at.strftime('%d %b %Y') }}</span></div>
+  </article>
+  {% endfor %}
+</div>
+{% elif query %}
+<div class="empty-state"><p>No results found for "{{ query }}".</p></div>
+{% endif %}
+{% endblock %}

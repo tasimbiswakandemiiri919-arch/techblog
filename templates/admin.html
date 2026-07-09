@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Admin — TechBlog{% endblock %}
+{% block content %}
+<div class="dashboard-wrap">
+  <h2>Admin Panel</h2>
+  <div class="dash-stats">
+    <div class="dash-stat"><div class="ds-num">{{ total_posts }}</div><div class="ds-lbl">Total Posts</div></div>
+    <div class="dash-stat"><div class="ds-num">{{ total_users }}</div><div class="ds-lbl">Users</div></div>
+    <div class="dash-stat"><div class="ds-num">{{ total_comments }}</div><div class="ds-lbl">Comments</div></div>
+  </div>
+  <h3>All Posts</h3>
+  <table class="table">
+    <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Status</th><th>Views</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for p in posts %}
+    <tr>
+      <td><a href="{{ url_for('post_detail', slug=p.slug) }}">{{ p.title }}</a></td>
+      <td>{{ p.username }}</td>
+      <td>{{ p.cat_name or '—' }}</td>
+      <td><span class="status-badge status-{{ p.status }}">{{ p.status }}</span></td>
+      <td>{{ p.views }}</td>
+      <td>{{ p.created_at.strftime('%d %b %Y') }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

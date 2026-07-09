@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} | TechBlog{% endblock %}
+{% block content %}
+<div class="post-wrap">
+  <div class="post-main">
+    <div class="post-meta-top">
+      {% if post.color %}
+      <a href="{{ url_for('category', slug=post.cat_slug) }}" class="cat-badge" style="background:{{ post.color }}22;color:{{ post.color }};border-color:{{ post.color }}44">{{ post.category_name }}</a>
+      {% endif %}
+      <span class="meta-dot">·</span>
+      <span>by {{ post.username }}</span>
+      <span class="meta-dot">·</span>
+      <span>{{ post.views }} views</span>
+    </div>
+    <h1 class="post-title">{{ post.title }}</h1>
+    <p class="post-excerpt">{{ post.excerpt }}</p>
+    {% if tags %}
+    <div class="tags-row">{% for tag in tags %}<span class="tag">#{{ tag.name }}</span>{% endfor %}</div>
+    {% endif %}
+    <div class="post-content">{{ post.content|safe }}</div>
+    {% if related %}
+    <div class="related-posts">
+      <div class="section-label">Related Posts</div>
+      <div class="related-grid">
+        {% for r in related %}
+        <a href="{{ url_for('post', slug=r.slug) }}" class="related-card">
+          <div class="related-title">{{ r.title }}</div>
+          <div class="related-excerpt">{{ r.excerpt[:80] }}...</div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="comments-section">
+      <div class="section-label">{{ comments|length }} Comment{{ 's' if comments|length != 1 }}</div>
+      {% for c in comments %}
+      <div class="comment">
+        <div class="comment-avatar">{{ c.author_name[0].upper() }}</div>
+        <div class="comment-body">
+          <div class="comment-author">{{ c.author_name }}</div>
+          <div class="comment-text">{{ c.content }}</div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="comment-form-wrap">
+        <div class="section-label">Leave a Comment</div>
+        <form action="{{ url_for('add_comment', slug=post.slug) }}" method="POST" class="comment-form">
+          <div class="form-row">
+            <input type="text" name="name" placeholder="Your name" required>
+            <input type="email" name="email" placeholder="Your email" required>
+          </div>
+          <textarea name="content" placeholder="Share your thoughts..." rows="4" required></textarea>
+          <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
